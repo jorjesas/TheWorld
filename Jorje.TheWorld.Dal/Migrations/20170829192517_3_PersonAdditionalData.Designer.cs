@@ -8,9 +8,10 @@ using Jorje.TheWorld.Dal.Context;
 namespace Jorje.TheWorld.Dal.Migrations
 {
     [DbContext(typeof(WorldDBContext))]
-    partial class WorldDBContextModelSnapshot : ModelSnapshot
+    [Migration("20170829192517_3_PersonAdditionalData")]
+    partial class _3_PersonAdditionalData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")

@@ -8,9 +8,10 @@ using Jorje.TheWorld.Dal.Context;
 namespace Jorje.TheWorld.Dal.Migrations
 {
     [DbContext(typeof(WorldDBContext))]
-    partial class WorldDBContextModelSnapshot : ModelSnapshot
+    [Migration("20170829191429_PersonTrip")]
+    partial class PersonTrip
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -30,25 +31,6 @@ namespace Jorje.TheWorld.Dal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Person");
-                });
-
-            modelBuilder.Entity("Jorje.TheWorld.Domain.PersonAdditionalData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Description");
-
-                    b.Property<int>("PersonId");
-
-                    b.Property<string>("PersonImagePath");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PersonId")
-                        .IsUnique();
-
-                    b.ToTable("PersonAdditionalData");
                 });
 
             modelBuilder.Entity("Jorje.TheWorld.Domain.PersonTrip", b =>
@@ -104,14 +86,6 @@ namespace Jorje.TheWorld.Dal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Trips");
-                });
-
-            modelBuilder.Entity("Jorje.TheWorld.Domain.PersonAdditionalData", b =>
-                {
-                    b.HasOne("Jorje.TheWorld.Domain.Person", "Person")
-                        .WithOne("PersonAdditionalData")
-                        .HasForeignKey("Jorje.TheWorld.Domain.PersonAdditionalData", "PersonId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Jorje.TheWorld.Domain.PersonTrip", b =>

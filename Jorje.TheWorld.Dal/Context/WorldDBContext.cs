@@ -34,6 +34,11 @@ namespace Jorje.TheWorld.Dal.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<PersonTrip>().HasKey(s => new { s.TripId, s.PersonId });
+
+            //modelBuilder.Entity<Person>().Property(s => s.PersonAdditionalData).IsRequired();
+            
+            
             //modelBuilder.Entity<StopDTO>(entity =>
             //{
             //    entity.HasKey(e => e.StopId).HasName("PK_Stop");
