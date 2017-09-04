@@ -25,5 +25,9 @@
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Jorje.TheWorld.Models\Jorje.TheWorld.Models.csproj" />
+    <ProjectReference Include="..\Jorje.TheWorld.Services\Jorje.TheWorld.Services.csproj" />
+  </ItemGroup>
 
 </Project>

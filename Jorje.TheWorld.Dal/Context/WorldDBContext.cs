@@ -3,6 +3,8 @@ using Jorje.TheWorld.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
 
 namespace Jorje.TheWorld.Dal.Context
 {
@@ -30,6 +32,8 @@ namespace Jorje.TheWorld.Dal.Context
             optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDb;Database=TheWorld_Dev;Trusted_Connection=true;MultipleActiveResultSets=true;");
 
             //optionsBuilder.UseLoggerFactory(_logger);
+
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,6 +41,12 @@ namespace Jorje.TheWorld.Dal.Context
             modelBuilder.Entity<PersonTrip>().HasKey(s => new { s.TripId, s.PersonId });
 
             //modelBuilder.Entity<Person>().Property(s => s.PersonAdditionalData).IsRequired();
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                modelBuilder.Entity(entityType.Name).Property<DateTime>("LastModified");
+            }
+
             
             
             //modelBuilder.Entity<StopDTO>(entity =>
@@ -73,6 +83,16 @@ namespace Jorje.TheWorld.Dal.Context
             //    entity.Property(e => e.Name).HasMaxLength(200);
 
             //});
+        }
+
+        public override int SaveChanges()
+        {
+            foreach (var entry in ChangeTracker.Entries().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
+            {
+                entry.Property("LastModified").CurrentValue = DateTime.Now;
+            }
+
+            return base.SaveChanges();
         }
 
         public virtual DbSet<Stop> Stops { get; set; }
