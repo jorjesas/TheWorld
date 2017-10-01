@@ -12,6 +12,8 @@ using Jorje.TheWorld.Bll.IBusiness;
 using Jorje.TheWorld.Bll.Business;
 using Jorje.TheWorld.Dal.IRepositories;
 using Jorje.TheWorld.Dal.Repositories;
+using Jorje.TheWorld.Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Jorje.TheWorld.Api
 {
@@ -64,6 +66,14 @@ namespace Jorje.TheWorld.Api
                 //config.Filters.Add(new EnvironmentFilter(container));
             });
 
+            services.AddIdentity<WorldUser, IdentityRole>(config =>
+            {
+                config.User.RequireUniqueEmail = true;
+                config.Password.RequiredLength = 8;
+                config.Cookies.ApplicationCookie.LoginPath = "/Auth/Login";
+
+            }).AddEntityFrameworkStores<WorldDBContext>();
+
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -89,6 +99,8 @@ namespace Jorje.TheWorld.Api
             }
 
             app.UseStaticFiles();
+
+            app.UseIdentity();
 
             app.UseMvc(routes =>
             {

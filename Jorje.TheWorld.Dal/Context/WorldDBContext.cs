@@ -1,14 +1,13 @@
-﻿using Jorje.TheWorld.Dal.DomainModels;
-using Jorje.TheWorld.Domain;
+﻿using Jorje.TheWorld.Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 
 namespace Jorje.TheWorld.Dal.Context
 {
-    public class WorldDBContext : DbContext
+    public class WorldDBContext : IdentityDbContext<WorldUser>
     {
         //private string _connectionString;
         //private ILoggerFactory _logger;
@@ -38,6 +37,8 @@ namespace Jorje.TheWorld.Dal.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<PersonTrip>().HasKey(s => new { s.TripId, s.PersonId });
 
             //modelBuilder.Entity<Person>().Property(s => s.PersonAdditionalData).IsRequired();

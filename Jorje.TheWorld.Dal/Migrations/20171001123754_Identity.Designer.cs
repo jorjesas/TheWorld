@@ -8,9 +8,10 @@ using Jorje.TheWorld.Dal.Context;
 namespace Jorje.TheWorld.Dal.Migrations
 {
     [DbContext(typeof(WorldDBContext))]
-    partial class WorldDBContextModelSnapshot : ModelSnapshot
+    [Migration("20171001123754_Identity")]
+    partial class Identity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2")
@@ -79,9 +80,9 @@ namespace Jorje.TheWorld.Dal.Migrations
 
                     b.Property<DateTime>("LastModified");
 
-                    b.Property<double>("Latitude");
+                    b.Property<decimal>("Latitude");
 
-                    b.Property<double>("Longitude");
+                    b.Property<decimal>("Longitude");
 
                     b.Property<string>("Name");
 

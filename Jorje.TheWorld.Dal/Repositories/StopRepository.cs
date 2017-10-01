@@ -1,5 +1,4 @@
 ﻿using Jorje.TheWorld.Dal.Context;
-using Jorje.TheWorld.Dal.DomainModels;
 using Jorje.TheWorld.Dal.IRepositories;
 using Jorje.TheWorld.Domain;
 using Microsoft.EntityFrameworkCore;

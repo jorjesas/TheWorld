@@ -1,5 +1,6 @@
 ﻿using Jorje.TheWorld.Models.ViewModels;
 using Jorje.TheWorld.Services.Contract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,13 @@ namespace Jorje.TheWorld.Web.Controllers
 
         public IActionResult Contact()
         {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult Trips()
+        {
+            //var trips = _
             return View();
         }
 

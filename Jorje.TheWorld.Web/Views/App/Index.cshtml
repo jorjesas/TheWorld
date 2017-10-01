@@ -1,17 +1,11 @@
+@model IEnumerable<Jorje.TheWorld.Models.TripModel>
 @{
-  ViewBag.Title = "Home Page";
+    ViewBag.Title = "Home Page";
 }
-<h1>The World</h1>
-<p>This will be a fun website soon!</p>
-
-<form>
-  <div>
-    <label>Date</label>
-    <input />
-  </div>
-  <div>
-    <label>Location</label>
-    <input />
-  </div>
-  <div><input type="submit" value="Add" /></div>
-</form>
+<div class="row">
+    <div class="col-lg-12">
+        <h1>Welcome to The World</h1>
+        <p>This is a web app that will help you build world trips.</p>
+        <a asp-controller="App" asp-action="Trips" class="btn btn-lg btn-success">Goto Your Trips</a>
+    </div>
+</div>
