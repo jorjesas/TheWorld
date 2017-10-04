@@ -10,6 +10,8 @@ namespace Jorje.TheWorld.Bll.IBusiness
     {
         Task<StopModel> GetStop(int stopId);
         Task<StopModel> GetStopsByTrip(int tripId);
+        Task<bool> CreateStop(StopModel stopModel);
+        Task<StopModel> DeleteStop(int stopId);
 
 
     }

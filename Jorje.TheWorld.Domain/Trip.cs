@@ -10,7 +10,6 @@ namespace Jorje.TheWorld.Domain
         public string Name { get; set; }
         public DateTime DateCreated { get; set; }
         public string UserName { get; set; }
-        public int StopId { get; set; }
         public ICollection<Stop> Stops { get; set; }
         public ICollection<PersonTrip> PersonTrips { get; set; }
     }
