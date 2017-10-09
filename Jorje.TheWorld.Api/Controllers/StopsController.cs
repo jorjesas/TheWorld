@@ -11,21 +11,30 @@ using Jorje.TheWorld.Models;
 namespace Jorje.TheWorld.Api.Controllers
 {
     [Authorize]
-    [Produces("application/json")]
-    [Route("api/Stops")]
+    [Route("api/stops")]
     public class StopsController : Controller
     {
         private IStopBus _stopBus;
+        private ITripBus _tripBus;
 
-        public StopsController(IStopBus stopBus)
+        public StopsController(IStopBus stopBus, ITripBus tripBus)
         {
             _stopBus = stopBus;
+            _tripBus = tripBus;
+        }
+
+        [HttpGet("{tripId}")]
+        public async Task<IActionResult> GetStopsByTrip(int tripId)
+        {
+            IEnumerable<StopDTO> stops = await _tripBus.GetStopsByTrip(tripId);
+
+            return Ok(null);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStop(int id)
         {
-            StopModel stop = await _stopBus.GetStop(id);
+            StopDTO stop = await _stopBus.GetStop(id);
 
             if (stop == null)
             {
@@ -36,7 +45,7 @@ namespace Jorje.TheWorld.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateStop([FromBody]StopModel stop)
+        public async Task<IActionResult> CreateStop([FromBody]StopDTO stop)
         {
             return Ok(await _stopBus.CreateStop(stop));
         }

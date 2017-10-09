@@ -10,7 +10,7 @@ namespace Jorje.TheWorld.Services
 {
     public class DebugMailService : IMailService
     {
-        void IMailService.SendMail(EmailModel email)
+        void IMailService.SendMail(EmailDTO email)
         {
             //throw new NotImplementedException();
         }

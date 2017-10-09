@@ -9,6 +9,6 @@ namespace Jorje.TheWorld.Services.Contract
 {
     public interface IMailService
     {
-        void SendMail(EmailModel email);
+        void SendMail(EmailDTO email);
     }
 }

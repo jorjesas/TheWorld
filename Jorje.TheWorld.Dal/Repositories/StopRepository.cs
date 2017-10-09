@@ -13,22 +13,21 @@ namespace Jorje.TheWorld.Dal.Repositories
     public class StopRepository : AbstractRepository<Stop>, IStopRepository
     {
         public StopRepository(WorldDBContext context) : base(context)
-        {
-                
+        {              
         }
 
         public async Task<Stop> GetStopById(int stopId)
         {
             var query = GetAll().Where(m => m.Id == stopId);
 
-            return await query.FirstAsync();
+            return await query.FirstOrDefaultAsync();
         }
 
         public async Task<Stop> DeleteStop(int stopId)
         {
             var query = GetAll().Where(m => m.Id == stopId);
 
-            Stop stop =  await query.FirstAsync();
+            Stop stop =  await query.FirstOrDefaultAsync();
 
             if (stop != null)
             {
@@ -39,7 +38,7 @@ namespace Jorje.TheWorld.Dal.Repositories
             return stop;
         }
 
-        public async Task<bool> CreateStop(Stop stop)
+        public async Task<Stop> CreateStop(Stop stop)
         {
             if (stop != null)
             {
@@ -47,7 +46,18 @@ namespace Jorje.TheWorld.Dal.Repositories
                 await SaveChanges();
             }
 
-            return true;
+            return stop;
+        }
+
+        public async Task<Stop> UpdateStop(Stop stop)
+        {
+            if (stop != null)
+            {
+                Update(stop);
+                await SaveChanges();
+            }
+
+            return stop;
         }
     }
 }

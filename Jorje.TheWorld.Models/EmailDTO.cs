@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Jorje.TheWorld.Models
 {
-    public class EmailModel
+    public class EmailDTO
     {
         public string To { get; set; }
         public string From { get; set; }

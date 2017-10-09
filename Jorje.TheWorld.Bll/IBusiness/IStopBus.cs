@@ -8,10 +8,10 @@ namespace Jorje.TheWorld.Bll.IBusiness
 {
     public interface IStopBus
     {
-        Task<StopModel> GetStop(int stopId);
-        Task<StopModel> GetStopsByTrip(int tripId);
-        Task<bool> CreateStop(StopModel stopModel);
-        Task<StopModel> DeleteStop(int stopId);
+        Task<StopDTO> GetStop(int stopId);
+        Task<StopDTO> GetStopsByTrip(int tripId);
+        Task<bool> CreateStop(StopDTO stopModel);
+        Task<StopDTO> DeleteStop(int stopId);
 
 
     }

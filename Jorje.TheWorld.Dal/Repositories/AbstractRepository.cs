@@ -19,9 +19,7 @@ namespace Jorje.TheWorld.Dal.Repositories
         public AbstractRepository(DbContext dbContext)
         {
             _dbContext = dbContext;
-
             _dbSet = dbContext.Set<T>();
-
         }
 
         public IQueryable<T> GetAll()

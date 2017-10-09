@@ -21,7 +21,7 @@ namespace Jorje.TheWorld.Bll.Business
         }
         #endregion
 
-        public async Task<StopModel> GetStop(int stopId)
+        public async Task<StopDTO> GetStop(int stopId)
         {
             var stop = await _stopRepo.GetStopById(stopId);
 
@@ -34,14 +34,16 @@ namespace Jorje.TheWorld.Bll.Business
             return null;
         }
 
-        public async Task<bool> CreateStop(StopModel stopModel)
+        public async Task<bool> CreateStop(StopDTO stopModel)
         {
             Stop stop = AutoMapperContainer.ConvertStopModelToStop(stopModel);
                 
-            return await _stopRepo.CreateStop(stop);
+            await _stopRepo.CreateStop(stop);
+        
+            return true;
         }
 
-        public async Task<StopModel> DeleteStop(int stopId)
+        public async Task<StopDTO> DeleteStop(int stopId)
         {
             Stop stop = await _stopRepo.DeleteStop(stopId);
 
@@ -53,7 +55,7 @@ namespace Jorje.TheWorld.Bll.Business
             return null;
         }
 
-        public Task<StopModel> GetStopsByTrip(int tripId)
+        public Task<StopDTO> GetStopsByTrip(int tripId)
         {
             throw new NotImplementedException();
         }

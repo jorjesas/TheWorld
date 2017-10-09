@@ -21,6 +21,8 @@ using System.Net;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Jorje.TheWorld.Bll.Mappers;
+using Microsoft.AspNetCore.Mvc.Formatters.Xml;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Jorje.TheWorld.Api
 {
@@ -74,6 +76,8 @@ namespace Jorje.TheWorld.Api
             services.AddMvc(config =>
             {
                 //config.Filters.Add(new EnvironmentFilter(container));
+                config.ReturnHttpNotAcceptable = true;
+                config.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
             });
 
             services.AddIdentity<WorldUser, IdentityRole>(config =>

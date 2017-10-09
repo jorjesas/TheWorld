@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace Jorje.TheWorld.Domain
 {
-    public class PersonTrip
+    public class TripStop
     {
         public int TripId { get; set; }
         public Trip Trip { get; set; }
-        public Guid PersonId { get; set; }
-        public Person Person { get; set; }
+        public Guid StopId { get; set; }
+        public Stop Stop { get; set; }
+        public int OrderId { get; set; }
+        public DateTime ArrivalTime { get; set; }
+        public DateTime DepartureTime { get; set; }
         public string Comment { get; set; }
+
     }
 }

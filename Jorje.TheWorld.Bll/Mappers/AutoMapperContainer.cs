@@ -14,16 +14,16 @@ namespace Jorje.TheWorld.Bll.Mappers
         {
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<Stop, StopModel>();
+                cfg.CreateMap<Stop, StopDTO>();
             });
         }
 
-        public static StopModel ConvertStopToStopModel(Stop stop)
+        public static StopDTO ConvertStopToStopModel(Stop stop)
         {
-            return AutoMapper.Mapper.Map<StopModel>(stop);
+            return AutoMapper.Mapper.Map<StopDTO>(stop);
         }
 
-        public static Stop ConvertStopModelToStop(StopModel stopModel)
+        public static Stop ConvertStopModelToStop(StopDTO stopModel)
         {
             return AutoMapper.Mapper.Map<Stop>(stopModel);
         }
