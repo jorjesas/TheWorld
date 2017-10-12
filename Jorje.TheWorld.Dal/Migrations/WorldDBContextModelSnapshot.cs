@@ -59,13 +59,17 @@ namespace Jorje.TheWorld.Dal.Migrations
                 {
                     b.Property<int>("TripId");
 
-                    b.Property<int>("PersonId");
+                    b.Property<Guid>("PersonId");
+
+                    b.Property<string>("Comment");
 
                     b.Property<DateTime>("LastModified");
 
+                    b.Property<int?>("PersonId1");
+
                     b.HasKey("TripId", "PersonId");
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("PersonId1");
 
                     b.ToTable("PersonTrip");
                 });
@@ -75,7 +79,7 @@ namespace Jorje.TheWorld.Dal.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("Arrival");
+                    b.Property<string>("Description");
 
                     b.Property<DateTime>("LastModified");
 
@@ -85,13 +89,7 @@ namespace Jorje.TheWorld.Dal.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<int>("Order");
-
-                    b.Property<int?>("TripId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TripId");
 
                     b.ToTable("Stops");
                 });
@@ -103,17 +101,49 @@ namespace Jorje.TheWorld.Dal.Migrations
 
                     b.Property<DateTime>("DateCreated");
 
+                    b.Property<string>("Description");
+
+                    b.Property<DateTime>("EndDate");
+
                     b.Property<DateTime>("LastModified");
 
                     b.Property<string>("Name");
 
-                    b.Property<int>("StopId");
+                    b.Property<decimal>("Price");
 
-                    b.Property<string>("UserName");
+                    b.Property<DateTime>("StartDate");
 
                     b.HasKey("Id");
 
                     b.ToTable("Trips");
+                });
+
+            modelBuilder.Entity("Jorje.TheWorld.Domain.TripStop", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("ArrivalTime");
+
+                    b.Property<string>("Comment");
+
+                    b.Property<DateTime>("DepartureTime");
+
+                    b.Property<DateTime>("LastModified");
+
+                    b.Property<int>("OrderId");
+
+                    b.Property<int>("StopId");
+
+                    b.Property<int>("TripId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StopId");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("TripStop");
                 });
 
             modelBuilder.Entity("Jorje.TheWorld.Domain.WorldUser", b =>
@@ -301,8 +331,7 @@ namespace Jorje.TheWorld.Dal.Migrations
                 {
                     b.HasOne("Jorje.TheWorld.Domain.Person", "Person")
                         .WithMany("PersonTrips")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("PersonId1");
 
                     b.HasOne("Jorje.TheWorld.Domain.Trip", "Trip")
                         .WithMany("PersonTrips")
@@ -310,11 +339,17 @@ namespace Jorje.TheWorld.Dal.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Jorje.TheWorld.Domain.Stop", b =>
+            modelBuilder.Entity("Jorje.TheWorld.Domain.TripStop", b =>
                 {
-                    b.HasOne("Jorje.TheWorld.Domain.Trip")
+                    b.HasOne("Jorje.TheWorld.Domain.Stop", "Stop")
+                        .WithMany()
+                        .HasForeignKey("StopId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Jorje.TheWorld.Domain.Trip", "Trip")
                         .WithMany("Stops")
-                        .HasForeignKey("TripId");
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>

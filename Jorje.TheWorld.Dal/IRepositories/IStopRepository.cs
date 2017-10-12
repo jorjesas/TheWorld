@@ -6,8 +6,8 @@ namespace Jorje.TheWorld.Dal.IRepositories
     public interface IStopRepository : IAbstractRepository<Stop>
     {
         Task<Stop> GetStopById(int stopId);
-        Task<Stop> CreateStop(Stop stop);
-        Task<Stop> DeleteStop(int stopId);
-        Task<Stop> UpdateStop(Stop stop);
+        Task<bool> CreateStop(Stop stop);
+        Task<bool> DeleteStop(Stop stop);
+        Task<bool> UpdateStop(Stop stop);
     }
 }

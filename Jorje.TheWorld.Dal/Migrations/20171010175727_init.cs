@@ -5,39 +5,61 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Jorje.TheWorld.Dal.Migrations
 {
-    public partial class Identity : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LastModified",
-                table: "Trips",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            migrationBuilder.CreateTable(
+                name: "Person",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DateOfBirth = table.Column<DateTime>(nullable: false),
+                    FirstName = table.Column<string>(nullable: true),
+                    LastModified = table.Column<DateTime>(nullable: false),
+                    LastName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Person", x => x.Id);
+                });
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LastModified",
-                table: "Stops",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            migrationBuilder.CreateTable(
+                name: "Stops",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Description = table.Column<string>(nullable: true),
+                    LastModified = table.Column<DateTime>(nullable: false),
+                    Latitude = table.Column<double>(nullable: false),
+                    Longitude = table.Column<double>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stops", x => x.Id);
+                });
 
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LastModified",
-                table: "PersonTrip",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LastModified",
-                table: "PersonAdditionalData",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "LastModified",
-                table: "Person",
-                nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            migrationBuilder.CreateTable(
+                name: "Trips",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DateCreated = table.Column<DateTime>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    LastModified = table.Column<DateTime>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Price = table.Column<decimal>(nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trips", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
@@ -94,6 +116,84 @@ namespace Jorje.TheWorld.Dal.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PersonAdditionalData",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Description = table.Column<string>(nullable: true),
+                    LastModified = table.Column<DateTime>(nullable: false),
+                    PersonId = table.Column<int>(nullable: false),
+                    PersonImagePath = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonAdditionalData", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PersonAdditionalData_Person_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Person",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PersonTrip",
+                columns: table => new
+                {
+                    TripId = table.Column<int>(nullable: false),
+                    PersonId = table.Column<Guid>(nullable: false),
+                    Comment = table.Column<string>(nullable: true),
+                    LastModified = table.Column<DateTime>(nullable: false),
+                    PersonId1 = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonTrip", x => new { x.TripId, x.PersonId });
+                    table.ForeignKey(
+                        name: "FK_PersonTrip_Person_PersonId1",
+                        column: x => x.PersonId1,
+                        principalTable: "Person",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PersonTrip_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripStop",
+                columns: table => new
+                {
+                    TripId = table.Column<int>(nullable: false),
+                    StopId = table.Column<int>(nullable: false),
+                    ArrivalTime = table.Column<DateTime>(nullable: false),
+                    Comment = table.Column<string>(nullable: true),
+                    DepartureTime = table.Column<DateTime>(nullable: false),
+                    LastModified = table.Column<DateTime>(nullable: false),
+                    OrderId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripStop", x => new { x.TripId, x.StopId });
+                    table.ForeignKey(
+                        name: "FK_TripStop_Stops_StopId",
+                        column: x => x.StopId,
+                        principalTable: "Stops",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TripStop_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -187,6 +287,22 @@ namespace Jorje.TheWorld.Dal.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_PersonAdditionalData_PersonId",
+                table: "PersonAdditionalData",
+                column: "PersonId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonTrip_PersonId1",
+                table: "PersonTrip",
+                column: "PersonId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripStop_StopId",
+                table: "TripStop",
+                column: "StopId");
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -227,6 +343,15 @@ namespace Jorje.TheWorld.Dal.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "PersonAdditionalData");
+
+            migrationBuilder.DropTable(
+                name: "PersonTrip");
+
+            migrationBuilder.DropTable(
+                name: "TripStop");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -242,30 +367,19 @@ namespace Jorje.TheWorld.Dal.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Person");
+
+            migrationBuilder.DropTable(
+                name: "Stops");
+
+            migrationBuilder.DropTable(
+                name: "Trips");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "LastModified",
-                table: "Trips");
-
-            migrationBuilder.DropColumn(
-                name: "LastModified",
-                table: "Stops");
-
-            migrationBuilder.DropColumn(
-                name: "LastModified",
-                table: "PersonTrip");
-
-            migrationBuilder.DropColumn(
-                name: "LastModified",
-                table: "PersonAdditionalData");
-
-            migrationBuilder.DropColumn(
-                name: "LastModified",
-                table: "Person");
         }
     }
 }

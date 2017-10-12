@@ -38,26 +38,19 @@ namespace Jorje.TheWorld.Dal.Repositories
             return stop;
         }
 
-        public async Task<Stop> CreateStop(Stop stop)
+        public async Task<bool> CreateStop(Stop stop)
         {
-            if (stop != null)
-            {
-                Add(stop);
-                await SaveChanges();
-            }
-
-            return stop;
+            return await InsertEntity(stop);
         }
 
-        public async Task<Stop> UpdateStop(Stop stop)
+        public async Task<bool> UpdateStop(Stop stop)
         {
-            if (stop != null)
-            {
-                Update(stop);
-                await SaveChanges();
-            }
+            return await UpdateEntity(stop);
+        }
 
-            return stop;
+        public async Task<bool> DeleteStop(Stop stop)
+        {
+            return await DeleteEntity(stop);
         }
     }
 }

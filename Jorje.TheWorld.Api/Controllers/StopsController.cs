@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Jorje.TheWorld.Bll.IBusiness;
 using Microsoft.AspNetCore.Authorization;
 using Jorje.TheWorld.Models;
+using Microsoft.AspNetCore.JsonPatch;
+using Jorje.TheWorld.Bll.Mappers;
 
 namespace Jorje.TheWorld.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/stops")]
     public class StopsController : Controller
     {
@@ -31,8 +33,8 @@ namespace Jorje.TheWorld.Api.Controllers
             return Ok(null);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetStop(int id)
+        [HttpGet("{id}", Name = "GetStop")]
+        public async Task<IActionResult> Get(int id)
         {
             StopDTO stop = await _stopBus.GetStop(id);
 
@@ -45,15 +47,82 @@ namespace Jorje.TheWorld.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateStop([FromBody]StopDTO stop)
+        public async Task<IActionResult> CreateStop([FromBody]StopForCreationDTO stopInput)
         {
-            return Ok(await _stopBus.CreateStop(stop));
+            if (stopInput == null)
+            {
+                return BadRequest();
+            }
+
+            StopDTO stop = await _stopBus.CreateStop(stopInput);
+
+            if (stop == null)
+            {
+                return StatusCode(500, "Insert failure");
+                //throw new Exception("Insert failure");
+            }
+
+            return CreatedAtRoute("GetStop", new { id = stop.Id}, stop);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> DeleteStop(int stopId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteStop(int id)
         {
-            return Ok(await _stopBus.GetStop(stopId));
+            StopDTO stop = await _stopBus.GetStop(id);
+
+            if (stop == null)
+            {
+                return NotFound();
+            }
+
+            if (await _stopBus.DeleteStop(stop))
+            {
+                return StatusCode(500, "Delete failure");
+                //throw new Exception("Insert failure");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStop(int id, [FromBody]StopForUpdateDTO stopInput)
+        {
+            if (stopInput == null)
+            {
+                return BadRequest();
+            }
+
+            var stop = await _stopBus.UpdateStop(id, stopInput);
+
+            if (stop == null)
+            {
+                return StatusCode(500, "Update failure");
+                //throw new Exception("Insert failure");
+            }
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PartiallyUpdateStop(int id, [FromBody]JsonPatchDocument<StopForUpdateDTO> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest();
+            }
+
+            StopForUpdateDTO updatedStop = new StopForUpdateDTO();
+            patchDoc.ApplyTo(updatedStop);
+
+            var stop = await _stopBus.UpdateStop(id, updatedStop);
+
+            if (stop == null)
+            {
+                return StatusCode(500, "Update failure");
+                //throw new Exception("Insert failure");
+            }
+
+            return NoContent();
         }
     }
 }

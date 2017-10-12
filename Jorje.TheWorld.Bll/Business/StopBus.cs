@@ -28,28 +28,7 @@ namespace Jorje.TheWorld.Bll.Business
 
             if (stop != null)
             {
-                return AutoMapperContainer.ConvertStopToStopModel(stop);
-            }
-
-            return null;
-        }
-
-        public async Task<bool> CreateStop(StopDTO stopModel)
-        {
-            Stop stop = AutoMapperContainer.ConvertStopModelToStop(stopModel);
-                
-            await _stopRepo.CreateStop(stop);
-        
-            return true;
-        }
-
-        public async Task<StopDTO> DeleteStop(int stopId)
-        {
-            Stop stop = await _stopRepo.DeleteStop(stopId);
-
-            if (stop != null)
-            {
-                return AutoMapperContainer.ConvertStopToStopModel(stop);
+                return StopMapper.ConvertEntityToModel(stop);
             }
 
             return null;
@@ -59,5 +38,50 @@ namespace Jorje.TheWorld.Bll.Business
         {
             throw new NotImplementedException();
         }
+
+        public async Task<StopDTO> CreateStop(StopForCreationDTO stopModel)
+        {
+            Stop stop = StopMapper.ConvertCreationModelToEntity(stopModel);
+                
+            if (await _stopRepo.CreateStop(stop))
+            {
+                return StopMapper.ConvertEntityToModel(stop);
+            }
+
+            return null;
+        }
+
+        public async Task<bool> DeleteStop(StopDTO stopModel)
+        {
+            Stop stop = StopMapper.ConvertModelToEntity(stopModel);
+
+            if (stop!= null && await _stopRepo.DeleteStop(stop))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<StopDTO> UpdateStop(int stopId, StopForUpdateDTO stopModel)
+        {
+            var stop = await _stopRepo.GetStopById(stopId);
+
+            //upsert
+            if (stop == null)
+            {
+                stop = new Stop() { Id=stopId };
+            }
+
+            stop = StopMapper.UpdateEntityToModel(stop, stopModel);
+
+            if (stop != null && await _stopRepo.UpdateStop(stop))
+            {
+                return StopMapper.ConvertEntityToModel(stop);
+            }
+
+            return null;
+        }
+
     }
 }

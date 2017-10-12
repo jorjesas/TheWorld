@@ -11,7 +11,13 @@ namespace Jorje.TheWorld.Dal.IRepositories
     {
         IQueryable<T> GetAll();
 
-        Task SaveChanges();
+        Task<bool> InsertEntity(T entity);
+
+        Task<bool> UpdateEntity(T entity);
+
+        Task<bool> DeleteEntity(T entity);
+
+        Task<bool> SaveChanges();
 
         void Add(T entity);
 

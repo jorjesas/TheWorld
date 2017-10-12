@@ -62,8 +62,8 @@ namespace Jorje.TheWorld.Api
 
             services.AddDbContext<WorldDBContext>();
 
-            services.AddScoped<IStopRepository, StopRepository>();
-            services.AddScoped<IStopBus, StopBus>();
+            InjectRepositoryLayer(services);
+            InjectBusinessLayer(services);
 
 
 
@@ -173,6 +173,18 @@ namespace Jorje.TheWorld.Api
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private void InjectBusinessLayer(IServiceCollection services)
+        {
+            services.AddScoped<IStopBus, StopBus>();
+            services.AddScoped<ITripBus, TripBus>();
+        }
+
+        private void InjectRepositoryLayer(IServiceCollection services)
+        {
+            services.AddScoped<IStopRepository, StopRepository>();
+            services.AddScoped<ITripRepository, TripRepository>();
         }
     }
 }

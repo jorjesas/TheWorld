@@ -27,9 +27,53 @@ namespace Jorje.TheWorld.Dal.Repositories
             return _dbSet;
         }
 
-        public async Task SaveChanges()
+        public async Task<bool> SaveChanges()
         {
-            await _dbContext.SaveChangesAsync(true);
+            return await _dbContext.SaveChangesAsync(true) > 0;
+        }
+
+        public async Task<bool> InsertEntity(T entity)
+        {
+            bool isSaved = false;
+
+            if (entity != null)
+            {
+                Add(entity);
+                isSaved = await SaveChanges();
+            }
+
+            return isSaved;
+        }
+
+        public async Task<bool> UpdateEntity(T entity)
+        {
+            bool isSaved = false;
+
+            //if (entity != null)
+            //{
+            //    Update(entity);
+            //    isSaved = await SaveChanges();
+            //}
+
+            if (entity != null && _dbContext.Entry(entity).State == EntityState.Modified)
+            {
+                isSaved = await SaveChanges();
+            }
+
+            return isSaved;
+        }
+
+        public async Task<bool> DeleteEntity(T entity)
+        {
+            bool isSaved = false;
+
+            if (entity != null)
+            {
+                Delete(entity);
+                isSaved = await SaveChanges();
+            }
+
+            return isSaved;
         }
 
         public virtual void Add(T entity)

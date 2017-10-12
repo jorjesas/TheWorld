@@ -39,7 +39,11 @@ namespace Jorje.TheWorld.Dal.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<PersonTrip>().HasKey(s => new { s.TripId, s.PersonId });
+            modelBuilder.Entity<PersonTrip>()
+                .HasKey(s => new { s.TripId, s.PersonId });
+
+            //modelBuilder.Entity<TripStop>()
+            //    .HasKey(s => new { s.TripId, s.StopId });
 
             //modelBuilder.Entity<Person>().Property(s => s.PersonAdditionalData).IsRequired();
 

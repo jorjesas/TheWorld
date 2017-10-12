@@ -8,9 +8,10 @@ namespace Jorje.TheWorld.Domain
 {
     public class TripStop
     {
+        public int Id { get; set; }
         public int TripId { get; set; }
         public Trip Trip { get; set; }
-        public Guid StopId { get; set; }
+        public int StopId { get; set; }
         public Stop Stop { get; set; }
         public int OrderId { get; set; }
         public DateTime ArrivalTime { get; set; }
