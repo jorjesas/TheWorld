@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Jorje.TheWorld.Dal.IRepositories;
 using Jorje.TheWorld.Domain;
 using Jorje.TheWorld.Bll.Mappers;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Jorje.TheWorld.Bll.Business
 {
@@ -53,9 +54,9 @@ namespace Jorje.TheWorld.Bll.Business
 
         public async Task<bool> DeleteStop(StopDTO stopModel)
         {
-            Stop stop = StopMapper.ConvertModelToEntity(stopModel);
+            //Stop stop = StopMapper.ConvertModelToEntity(stopModel);
 
-            if (stop!= null && await _stopRepo.DeleteStop(stop))
+            if (stopModel!= null && await _stopRepo.DeleteStop(stopModel.Id))
             {
                 return true;
             }
@@ -74,6 +75,29 @@ namespace Jorje.TheWorld.Bll.Business
             }
 
             stop = StopMapper.UpdateEntityToModel(stop, stopModel);
+
+            if (stop != null && await _stopRepo.UpdateStop(stop))
+            {
+                return StopMapper.ConvertEntityToModel(stop);
+            }
+
+            return null;
+        }
+
+        public async Task<StopDTO> PartialUpdateStop(int stopId, JsonPatchDocument<StopForUpdateDTO> patchDoc)
+        {
+            var stop = await _stopRepo.GetStopById(stopId);
+
+            if (stop == null)
+            {
+                return null;
+            }
+
+            StopForUpdateDTO updatedStop = StopMapper.ConvertEntityToModel<StopForUpdateDTO>(stop);
+
+            patchDoc.ApplyTo(updatedStop);
+
+            StopMapper.UpdateModel<StopForUpdateDTO>(updatedStop, stop);
 
             if (stop != null && await _stopRepo.UpdateStop(stop))
             {

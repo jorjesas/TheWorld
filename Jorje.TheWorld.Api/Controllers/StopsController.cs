@@ -111,10 +111,7 @@ namespace Jorje.TheWorld.Api.Controllers
                 return BadRequest();
             }
 
-            StopForUpdateDTO updatedStop = new StopForUpdateDTO();
-            patchDoc.ApplyTo(updatedStop);
-
-            var stop = await _stopBus.UpdateStop(id, updatedStop);
+            var stop = await _stopBus.PartialUpdateStop(id, patchDoc);
 
             if (stop == null)
             {

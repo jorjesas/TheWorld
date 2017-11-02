@@ -23,20 +23,22 @@ namespace Jorje.TheWorld.Dal.Repositories
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<Stop> DeleteStop(int stopId)
-        {
-            var query = GetAll().Where(m => m.Id == stopId);
+        //public async Task<Stop> DeleteStop(int stopId)
+        //{
+        //    var query = GetAll().Where(m => m.Id == stopId);
 
-            Stop stop =  await query.FirstOrDefaultAsync();
+        //    Stop stop =  await query.FirstOrDefaultAsync();
 
-            if (stop != null)
-            {
-                Delete(stop);
-                await SaveChanges();
-            }
+        //    if (stop != null)
+        //    {
+                
 
-            return stop;
-        }
+        //        Delete(stop);
+        //        await SaveChanges();
+        //    }
+
+        //    return stop;
+        //}
 
         public async Task<bool> CreateStop(Stop stop)
         {
@@ -48,8 +50,10 @@ namespace Jorje.TheWorld.Dal.Repositories
             return await UpdateEntity(stop);
         }
 
-        public async Task<bool> DeleteStop(Stop stop)
+        public async Task<bool> DeleteStop(int id)
         {
+            Stop stop = await GetStopById(id);
+
             return await DeleteEntity(stop);
         }
     }

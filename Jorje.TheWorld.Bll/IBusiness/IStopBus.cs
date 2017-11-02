@@ -1,4 +1,5 @@
 ﻿using Jorje.TheWorld.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +14,7 @@ namespace Jorje.TheWorld.Bll.IBusiness
         Task<StopDTO> CreateStop(StopForCreationDTO stopModel);
         Task<bool> DeleteStop(StopDTO stopModel);
         Task<StopDTO> UpdateStop(int stopId, StopForUpdateDTO stopModel);
+        Task<StopDTO> PartialUpdateStop(int stopId, JsonPatchDocument<StopForUpdateDTO> patchDoc);
 
 
     }

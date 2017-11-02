@@ -30,9 +30,15 @@ namespace Jorje.TheWorld.Bll.Mappers
             return AutoMapper.Mapper.Map<T>(obj);
         }
 
+        public static T2 GenericConvert<T1,T2>(T1 source, T2 destination)
+        {
+            return AutoMapper.Mapper.Map(source, destination);
+        }
+
         public static object GenericUpdate(Object obj, Object updatedObj, Type objType, Type updatedObjType)
         {
             return AutoMapper.Mapper.Map(obj, updatedObj, objType, updatedObjType);
+
         }
 
     }

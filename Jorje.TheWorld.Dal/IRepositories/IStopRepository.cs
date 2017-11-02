@@ -7,7 +7,7 @@ namespace Jorje.TheWorld.Dal.IRepositories
     {
         Task<Stop> GetStopById(int stopId);
         Task<bool> CreateStop(Stop stop);
-        Task<bool> DeleteStop(Stop stop);
+        Task<bool> DeleteStop(int id);
         Task<bool> UpdateStop(Stop stop);
     }
 }
