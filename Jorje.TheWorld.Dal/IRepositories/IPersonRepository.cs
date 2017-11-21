@@ -9,9 +9,9 @@ namespace Jorje.TheWorld.Dal.IRepositories
 {
     public interface IPersonRepository : IAbstractRepository<Person>
     {
-        Task<Person> GetPersonByIdAsync(int personId);
-        Task<Person> CreatePerson(Person person);
-        Task<Person> DeletePerson(int personId);
-        Task<Person> UpdatePerson(Person person);
+        Task<Person> GetPersonById(int personId);
+        Task<bool> CreatePerson(Person person);
+        Task<bool> DeletePerson(int personId);
+        Task<bool> UpdatePerson(Person person);
     }
 }

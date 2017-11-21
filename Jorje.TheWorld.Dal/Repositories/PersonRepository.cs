@@ -16,48 +16,28 @@ namespace Jorje.TheWorld.Dal.Repositories
         {
         }
 
-        public async Task<Person> CreatePerson(Person person)
-        {
-            if (person != null)
-            {
-                Add(person);
-                await SaveChanges();
-            }
-
-            return person;
-        }
-
-        public async Task<Person> DeletePerson(int personId)
-        {
-            var query = GetAll().Where(m => m.Id == personId);
-
-            Person person = await query.FirstOrDefaultAsync();
-
-            if (person != null)
-            {
-                Delete(person);
-                await SaveChanges();
-            }
-
-            return person;
-        }
-
-        public async Task<Person> GetPersonByIdAsync(int personId)
+        public async Task<Person> GetPersonById(int personId)
         {
             var query = GetAll().Where(m => m.Id == personId);
 
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<Person> UpdatePerson(Person person)
+        public async Task<bool> CreatePerson(Person person)
         {
-            if (person != null)
-            {
-                Update(person);
-                await SaveChanges();
-            }
+            return await InsertEntity(person);
+        }
 
-            return person;
+        public async Task<bool> DeletePerson(int personId)
+        {
+            Person person = await GetPersonById(personId);
+
+            return await DeleteEntity(person);
+        }
+
+        public async Task<bool> UpdatePerson(Person person)
+        {
+            return await UpdateEntity(person);
         }
     }
 }

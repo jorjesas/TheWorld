@@ -17,20 +17,10 @@ namespace Jorje.TheWorld.Api.Controllers
     public class StopsController : Controller
     {
         private IStopBus _stopBus;
-        private ITripBus _tripBus;
 
-        public StopsController(IStopBus stopBus, ITripBus tripBus)
+        public StopsController(IStopBus stopBus)
         {
             _stopBus = stopBus;
-            _tripBus = tripBus;
-        }
-
-        [HttpGet("{tripId}")]
-        public async Task<IActionResult> GetStopsByTrip(int tripId)
-        {
-            IEnumerable<StopDTO> stops = await _tripBus.GetStopsByTrip(tripId);
-
-            return Ok(null);
         }
 
         [HttpGet("{id}", Name = "GetStop")]
@@ -75,7 +65,7 @@ namespace Jorje.TheWorld.Api.Controllers
                 return NotFound();
             }
 
-            if (await _stopBus.DeleteStop(stop))
+            if (!await _stopBus.DeleteStop(stop))
             {
                 return StatusCode(500, "Delete failure");
                 //throw new Exception("Insert failure");

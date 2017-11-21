@@ -16,35 +16,36 @@ namespace Jorje.TheWorld.Dal.Repositories
         {
         }
 
-        public Task<Person> AddPerson(Person person)
+        public async Task<IEnumerable<Person>> GetPersonsByTrip(int tripId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Stop> AddStop(Stop stop)
+        public async Task<IEnumerable<Stop>> GetStopsByTrip(int tripId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<Trip> CreateTrip(Trip trip)
-        {
-            if (trip != null)
-            {
-                Add(trip);
-                await SaveChanges();
-            }
-
-            return trip;
-        }
-
-        public Task<Trip> DeleteTrip(int tripId)
+        public async Task<bool> AddPerson(Person person)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Stop>> GetStopsByTripId(int tripId)
+        public async Task<bool> AddStop(Stop stop)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> CreateTrip(Trip trip)
+        {
+            return await InsertEntity(trip);
+        }
+
+        public async Task<bool> DeleteTrip(int tripId)
+        {
+            Trip trip = await GetTripById(tripId);
+
+            return await DeleteEntity(trip);
         }
 
         public async Task<Trip> GetTripById(int tripId)
@@ -54,15 +55,9 @@ namespace Jorje.TheWorld.Dal.Repositories
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task<Trip> UpdateTrip(Trip trip)
+        public async Task<bool> UpdateTrip(Trip trip)
         {
-            if (trip != null)
-            {
-                Update(trip);
-                await SaveChanges();
-            }
-
-            return trip;
+            return await UpdateEntity(trip);
         }
     }
 }

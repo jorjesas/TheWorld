@@ -10,11 +10,12 @@ namespace Jorje.TheWorld.Dal.IRepositories
     public interface ITripRepository: IAbstractRepository<Trip>
     {
         Task<Trip> GetTripById(int tripId);
-        Task<IEnumerable<Stop>> GetStopsByTripId(int tripId);
-        Task<Trip> CreateTrip(Trip trip);
-        Task<Trip> DeleteTrip(int tripId);
-        Task<Trip> UpdateTrip(Trip trip);
-        Task<Stop> AddStop(Stop stop);
-        Task<Person> AddPerson(Person person);
+        Task<IEnumerable<Stop>> GetStopsByTrip(int tripId);
+        Task<IEnumerable<Person>> GetPersonsByTrip(int tripId);
+        Task<bool> CreateTrip(Trip trip);
+        Task<bool> DeleteTrip(int tripId);
+        Task<bool> UpdateTrip(Trip trip);
+        Task<bool> AddStop(Stop stop);
+        Task<bool> AddPerson(Person person);
     }
 }

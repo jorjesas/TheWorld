@@ -1,70 +1,68 @@
+﻿using Jorje.TheWorld.Bll.IBusiness;
+using Jorje.TheWorld.Models;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Jorje.TheWorld.Bll.IBusiness;
-using Jorje.TheWorld.Models;
-using Microsoft.AspNetCore.JsonPatch;
 
 namespace Jorje.TheWorld.Api.Controllers
 {
-    [Route("api/trips")]
-    public class TripsController : Controller
+    [Route("api/persons")]
+    public class PersonsController : Controller
     {
-        private ITripBus _tripBus;
-        private IStopBus _stopBus;
+        private IPersonBus _personBus;
 
-        public TripsController(ITripBus tripBus, IStopBus stopBus)
+        public PersonsController(IPersonBus personBus)
         {
-            _tripBus = tripBus;
-            _stopBus = stopBus;
+            _personBus = personBus;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            TripDTO trip = await _tripBus.GetTrip(id);
+            PersonDTO person = await _personBus.GetPerson(id);
 
-            if (trip == null)
+            if (person == null)
             {
                 return NotFound();
             }
 
-            return Ok(trip);
+            return Ok(person);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTrip([FromBody]TripDTO tripInput)
+        public async Task<IActionResult> CreatePerson([FromBody]PersonDTO personIput)
         {
-            if (tripInput == null)
+            if (personIput == null)
             {
                 return BadRequest();
             }
 
-            TripDTO trip = await _tripBus.CreateTrip(tripInput);
+            PersonDTO person = await _personBus.CreatePerson(personIput);
 
-            if (trip == null)
+            if (person == null)
             {
                 return StatusCode(500, "Insert failure");
                 //throw new Exception("Insert failure");
             }
 
-            return CreatedAtRoute("", new { id = trip.Id }, trip);
+            return CreatedAtRoute("", new { id = person.Id }, person);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTrip(int id)
+        public async Task<IActionResult> DeletePerson(int id)
         {
-            TripDTO trip = await _tripBus.GetTrip(id);
+            PersonDTO person = await _personBus.GetPerson(id);
 
-            if (trip == null)
+            if (person == null)
             {
                 return NotFound();
             }
 
-            if (!await _tripBus.DeleteTrip(trip))
+            if (!await _personBus.DeletePerson(person))
             {
                 return StatusCode(500, "Delete failure");
                 //throw new Exception("Insert failure");
@@ -74,16 +72,16 @@ namespace Jorje.TheWorld.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTrip(int id, [FromBody]TripDTO tripInput)
+        public async Task<IActionResult> UpdatePerson(int id, [FromBody]PersonDTO personInput)
         {
-            if (tripInput == null)
+            if (personInput == null)
             {
                 return BadRequest();
             }
 
-            var trip = await _tripBus.UpdateTrip(id, tripInput);
+            var stop = await _personBus.UpdatePerson(id, personInput);
 
-            if (trip == null)
+            if (stop == null)
             {
                 return StatusCode(500, "Update failure");
                 //throw new Exception("Insert failure");
@@ -93,16 +91,16 @@ namespace Jorje.TheWorld.Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PartiallyUpdateTrip(int id, [FromBody]JsonPatchDocument<TripDTO> patchDoc)
+        public async Task<IActionResult> PartiallyUpdatePerson(int id, [FromBody]JsonPatchDocument<PersonDTO> patchDoc)
         {
             if (patchDoc == null)
             {
                 return BadRequest();
             }
 
-            var trip = await _tripBus.PartialUpdateTrip(id, patchDoc);
+            var person = await _personBus.PartialUpdatePerson(id, patchDoc);
 
-            if (trip == null)
+            if (person == null)
             {
                 return StatusCode(500, "Update failure");
                 //throw new Exception("Insert failure");
@@ -110,8 +108,6 @@ namespace Jorje.TheWorld.Api.Controllers
 
             return NoContent();
         }
-
-
 
     }
 }
