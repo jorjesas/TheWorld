@@ -31,21 +31,42 @@ namespace Jorje.TheWorld.Dal.Context
             optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDb;Database=TheWorld_Dev;Trusted_Connection=true;MultipleActiveResultSets=true;");
 
             //optionsBuilder.UseLoggerFactory(_logger);
-
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Person>()
+                            .HasOne(a => a.PersonAdditionalData)
+                            .WithOne(b => b.Person)
+                            .HasForeignKey<PersonAdditionalData>(b => b.PersonId);
+
             modelBuilder.Entity<PersonTrip>()
                 .HasKey(s => new { s.TripId, s.PersonId });
 
-            //modelBuilder.Entity<TripStop>()
-            //    .HasKey(s => new { s.TripId, s.StopId });
+            modelBuilder.Entity<PersonTrip>()
+                            .HasOne(p => p.Person)
+                            .WithMany(t => t.PersonTrips)
+                            .HasForeignKey(p => p.PersonId);
 
-            //modelBuilder.Entity<Person>().Property(s => s.PersonAdditionalData).IsRequired();
+            modelBuilder.Entity<PersonTrip>()
+                            .HasOne(t => t.Trip)
+                            .WithMany(p => p.PersonTrips)
+                            .HasForeignKey(t => t.TripId);
+
+            modelBuilder.Entity<TripStop>()
+                .HasKey(s => new { s.TripId, s.StopId });
+
+            modelBuilder.Entity<TripStop>()
+                             .HasOne(t => t.Trip)
+                             .WithMany(s => s.TripStops)
+                             .HasForeignKey(t => t.TripId);
+
+            modelBuilder.Entity<TripStop>()
+                             .HasOne(s => s.Stop)
+                             .WithMany(t => t.TripStops)
+                             .HasForeignKey(s => s.StopId);
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
@@ -102,6 +123,9 @@ namespace Jorje.TheWorld.Dal.Context
 
         public virtual DbSet<Stop> Stops { get; set; }
         public virtual DbSet<Trip> Trips { get; set; }
+        public virtual DbSet<Person> Persons { get; set; }
+        public virtual DbSet<PersonAdditionalData> PersonAdditionalData { get; set; }
+        public virtual DbSet<PersonTrip> PersonTrips { get; set; }
 
 
     }

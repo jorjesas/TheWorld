@@ -31,7 +31,7 @@ namespace Jorje.TheWorld.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Person");
+                    b.ToTable("Persons");
                 });
 
             modelBuilder.Entity("Jorje.TheWorld.Domain.PersonAdditionalData", b =>

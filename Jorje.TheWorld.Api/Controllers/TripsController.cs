@@ -14,15 +14,13 @@ namespace Jorje.TheWorld.Api.Controllers
     public class TripsController : Controller
     {
         private ITripBus _tripBus;
-        private IStopBus _stopBus;
 
-        public TripsController(ITripBus tripBus, IStopBus stopBus)
+        public TripsController(ITripBus tripBus)
         {
             _tripBus = tripBus;
-            _stopBus = stopBus;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetTrips")]
         public async Task<IActionResult> Get(int id)
         {
             TripDTO trip = await _tripBus.GetTrip(id);
@@ -51,7 +49,7 @@ namespace Jorje.TheWorld.Api.Controllers
                 //throw new Exception("Insert failure");
             }
 
-            return CreatedAtRoute("", new { id = trip.Id }, trip);
+            return CreatedAtRoute("GetTrips", new { id = trip.Id }, trip);
         }
 
         [HttpDelete("{id}")]
@@ -67,7 +65,6 @@ namespace Jorje.TheWorld.Api.Controllers
             if (!await _tripBus.DeleteTrip(trip))
             {
                 return StatusCode(500, "Delete failure");
-                //throw new Exception("Insert failure");
             }
 
             return NoContent();
@@ -86,7 +83,6 @@ namespace Jorje.TheWorld.Api.Controllers
             if (trip == null)
             {
                 return StatusCode(500, "Update failure");
-                //throw new Exception("Insert failure");
             }
 
             return NoContent();
@@ -105,7 +101,6 @@ namespace Jorje.TheWorld.Api.Controllers
             if (trip == null)
             {
                 return StatusCode(500, "Update failure");
-                //throw new Exception("Insert failure");
             }
 
             return NoContent();

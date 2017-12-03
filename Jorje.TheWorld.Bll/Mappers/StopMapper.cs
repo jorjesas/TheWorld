@@ -1,6 +1,7 @@
 ﻿using Jorje.TheWorld.Domain;
 using Jorje.TheWorld.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,17 @@ namespace Jorje.TheWorld.Bll.Mappers
         public static StopDTO ConvertEntityToModel(Stop stop)
         {
             return AutoMapperContainer.GenericConvert<StopDTO>(stop);
+        }
+
+        public static List<StopDTO> ConvertEntityToModel(IEnumerable<Stop> stops)
+        {
+            var stopModelList = new List<StopDTO>();
+
+            foreach (var stop in stops)
+            {
+                stopModelList.Add(AutoMapperContainer.GenericConvert<StopDTO>(stop));
+            }
+            return stopModelList;
         }
 
         public static Stop ConvertCreationModelToEntity(StopForCreationDTO stopInput)

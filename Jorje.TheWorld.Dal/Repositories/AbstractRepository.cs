@@ -1,4 +1,5 @@
-﻿using Jorje.TheWorld.Dal.IRepositories;
+﻿using Jorje.TheWorld.Common.Helpers.Sorting;
+using Jorje.TheWorld.Dal.IRepositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,13 +17,15 @@ namespace Jorje.TheWorld.Dal.Repositories
 
         protected DbSet<T> _dbSet;
 
+        protected ISortPropertyMappingService _sortPropertyMappingService;
+
         public AbstractRepository(DbContext dbContext)
         {
             _dbContext = dbContext;
             _dbSet = dbContext.Set<T>();
         }
 
-        public IQueryable<T> GetAll()
+        public virtual IQueryable<T> GetAll()
         {
             return _dbSet;
         }

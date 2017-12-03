@@ -16,10 +16,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.7.13" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Jorje.TheWorld.Common\Jorje.TheWorld.Common.csproj" />
     <ProjectReference Include="..\Jorje.TheWorld.Domain\Jorje.TheWorld.Domain.csproj" />
+    <ProjectReference Include="..\Jorje.TheWorld.Models\Jorje.TheWorld.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,17 +8,29 @@ using Jorje.TheWorld.Dal.IRepositories;
 using Jorje.TheWorld.Domain;
 using Jorje.TheWorld.Bll.Mappers;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Adapters;
+using Jorje.TheWorld.Common.Helpers;
+using Jorje.TheWorld.Common.Helpers.Pagination;
+using Jorje.TheWorld.Common.Helpers.Sorting;
+using Jorje.TheWorld.Dal.Sort;
+using Jorje.TheWorld.Bll.Containers;
+using Jorje.TheWorld.Common.Services.Contract;
+using Jorje.TheWorld.Common.Services;
 
 namespace Jorje.TheWorld.Bll.Business
 {
     public class StopBus : IStopBus
     {
         IStopRepository _stopRepo;
+        ISortPropertyMappingService _sortPropertyMappingService;
+        ITypeHelperService _typeHelperService;
 
         #region ctor
         public StopBus(IStopRepository stopRepo)
         {
             _stopRepo = stopRepo;
+            _sortPropertyMappingService = new StopSortPropertyMappingService();
+            _typeHelperService = new TypeHelperService();
         }
         #endregion
 
@@ -33,6 +45,29 @@ namespace Jorje.TheWorld.Bll.Business
             }
 
             return null;
+        }
+
+        public async Task<ResourceDataResult> GetStops(PaginationProperties paginationProperties)
+        {
+            ResourceDataResult result = new ResourceDataResult();
+
+            if (!_sortPropertyMappingService.ValidMappingExistsFor<StopDTO, Stop>(paginationProperties.OrderBy))
+            {
+                result.StatusCode = 400;
+                result.ErrorMessage = "Invalid sorting field in query string.";
+                return result;
+            }
+
+            PagedList<Stop> stops = await _stopRepo.GetStops(paginationProperties);
+
+            //PagedList<StopDTO> stopModels = new PagedList<StopDTO>(StopMapper.ConvertEntityToModel(stops), stops.Count, stops.CurrentPage, stops.PageSize);
+
+            if (stops != null && stops.Count > 0)
+            {
+                result.Result = new PagedList<StopDTO>(StopMapper.ConvertEntityToModel(stops), stops.Count, stops.CurrentPage, stops.PageSize);
+            }
+
+            return result;
         }
 
         public Task<StopDTO> GetStopsByTrip(int tripId)
@@ -84,7 +119,7 @@ namespace Jorje.TheWorld.Bll.Business
             return null;
         }
 
-        public async Task<StopDTO> PartialUpdateStop(int stopId, JsonPatchDocument<StopForUpdateDTO> patchDoc)
+        public async Task<StopForUpdateDTO> GetUpdateModelForStop(int stopId)
         {
             var stop = await _stopRepo.GetStopById(stopId);
 
@@ -95,16 +130,7 @@ namespace Jorje.TheWorld.Bll.Business
 
             StopForUpdateDTO updatedStop = StopMapper.ConvertEntityToModel<StopForUpdateDTO>(stop);
 
-            patchDoc.ApplyTo(updatedStop);
-
-            StopMapper.UpdateModel<StopForUpdateDTO>(updatedStop, stop);
-
-            if (stop != null && await _stopRepo.UpdateStop(stop))
-            {
-                return StopMapper.ConvertEntityToModel(stop);
-            }
-
-            return null;
+            return updatedStop;
         }
 
     }

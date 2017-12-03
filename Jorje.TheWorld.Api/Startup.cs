@@ -23,6 +23,16 @@ using System.Text;
 using Jorje.TheWorld.Bll.Mappers;
 using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Diagnostics;
+using NLog.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Jorje.TheWorld.Common.Helpers.Sorting;
+using Jorje.TheWorld.Dal.Sort;
+using Newtonsoft.Json.Serialization;
+using Jorje.TheWorld.Common.Services.Contract;
+using Jorje.TheWorld.Common.Services;
 
 namespace Jorje.TheWorld.Api
 {
@@ -65,7 +75,13 @@ namespace Jorje.TheWorld.Api
             InjectRepositoryLayer(services);
             InjectBusinessLayer(services);
 
-
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddScoped<IUrlHelper, UrlHelper>(implementationFactory =>
+            {
+                var actionContext = implementationFactory.GetService<IActionContextAccessor>().ActionContext;
+                return new UrlHelper(actionContext);
+            });
+            services.AddTransient<ITypeHelperService, TypeHelperService>();
 
             services.AddLogging();
 
@@ -78,6 +94,11 @@ namespace Jorje.TheWorld.Api
                 //config.Filters.Add(new EnvironmentFilter(container));
                 config.ReturnHttpNotAcceptable = true;
                 config.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
+                config.InputFormatters.Add(new XmlDataContractSerializerInputFormatter());
+            })
+            .AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
             services.AddIdentity<WorldUser, IdentityRole>(config =>
@@ -113,7 +134,9 @@ namespace Jorje.TheWorld.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            loggerFactory.AddDebug(LogLevel.Information); //debug window
+            //loggerFactory.AddProvider(new NLog.Extensions.Logging.NLogLoggerProvider());
+            loggerFactory.AddNLog();
 
             if (env.IsDevelopment())
             {
@@ -126,6 +149,12 @@ namespace Jorje.TheWorld.Api
                 {
                     appBuilder.Run(async context =>
                     {
+                    var exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (exceptionHandlerFeature != null)
+                    {
+                        var logger = loggerFactory.CreateLogger("Global exception logger");
+                        logger.LogError(500, exceptionHandlerFeature.Error, exceptionHandlerFeature.Error.Message);
+                        }
                         context.Response.StatusCode = 500;
                         await context.Response.WriteAsync("Unexpected fault happened. Try again later.");
                     });
@@ -179,12 +208,14 @@ namespace Jorje.TheWorld.Api
         {
             services.AddScoped<IStopBus, StopBus>();
             services.AddScoped<ITripBus, TripBus>();
+            services.AddScoped<IPersonBus, PersonBus>();
         }
 
         private void InjectRepositoryLayer(IServiceCollection services)
         {
             services.AddScoped<IStopRepository, StopRepository>();
             services.AddScoped<ITripRepository, TripRepository>();
+            services.AddScoped<IPersonRepository, PersonRepository>();
         }
     }
 }

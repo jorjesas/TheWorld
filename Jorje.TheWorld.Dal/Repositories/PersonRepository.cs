@@ -16,6 +16,11 @@ namespace Jorje.TheWorld.Dal.Repositories
         {
         }
 
+        public override IQueryable<Person> GetAll()
+        {
+            return _dbSet.Include(p => p.PersonAdditionalData);
+        }
+
         public async Task<Person> GetPersonById(int personId)
         {
             var query = GetAll().Where(m => m.Id == personId);

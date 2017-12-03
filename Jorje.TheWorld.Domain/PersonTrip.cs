@@ -10,7 +10,7 @@ namespace Jorje.TheWorld.Domain
     {
         public int TripId { get; set; }
         public Trip Trip { get; set; }
-        public Guid PersonId { get; set; }
+        public int PersonId { get; set; }
         public Person Person { get; set; }
         public string Comment { get; set; }
     }

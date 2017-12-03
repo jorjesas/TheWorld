@@ -20,7 +20,7 @@ namespace Jorje.TheWorld.Api.Controllers
             _personBus = personBus;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetPerson")]
         public async Task<IActionResult> Get(int id)
         {
             PersonDTO person = await _personBus.GetPerson(id);
@@ -46,10 +46,9 @@ namespace Jorje.TheWorld.Api.Controllers
             if (person == null)
             {
                 return StatusCode(500, "Insert failure");
-                //throw new Exception("Insert failure");
             }
 
-            return CreatedAtRoute("", new { id = person.Id }, person);
+            return CreatedAtRoute("GetPerson", new { id = person.Id }, person);
         }
 
         [HttpDelete("{id}")]
@@ -65,7 +64,6 @@ namespace Jorje.TheWorld.Api.Controllers
             if (!await _personBus.DeletePerson(person))
             {
                 return StatusCode(500, "Delete failure");
-                //throw new Exception("Insert failure");
             }
 
             return NoContent();
@@ -79,12 +77,11 @@ namespace Jorje.TheWorld.Api.Controllers
                 return BadRequest();
             }
 
-            var stop = await _personBus.UpdatePerson(id, personInput);
+            var person = await _personBus.UpdatePerson(id, personInput);
 
-            if (stop == null)
+            if (person == null)
             {
                 return StatusCode(500, "Update failure");
-                //throw new Exception("Insert failure");
             }
 
             return NoContent();
@@ -103,7 +100,6 @@ namespace Jorje.TheWorld.Api.Controllers
             if (person == null)
             {
                 return StatusCode(500, "Update failure");
-                //throw new Exception("Insert failure");
             }
 
             return NoContent();

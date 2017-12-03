@@ -13,7 +13,7 @@ namespace Jorje.TheWorld.Domain
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime DateCreated { get; set; }
-        public ICollection<TripStop> Stops { get; set; }
+        public ICollection<TripStop> TripStops { get; set; }
         public ICollection<PersonTrip> PersonTrips { get; set; }
     }
 }
