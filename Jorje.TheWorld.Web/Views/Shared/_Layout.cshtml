@@ -16,12 +16,24 @@
 
 
     <div id="sidebar">
-        <img src="~/img/user1.jpg" alt="headshot" class="headshot" />
-        <span id="username">Sam Hastings</span>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <img src="~/img/user1.jpg" alt="loggedIn" class="headshot" />
+            <span id="userName">@User.Identity.Name</span>
+        }
         <ul class="nav">
             <li class="active"><a asp-controller="App" asp-action="Index">Home</a></li>
             <li><a asp-controller="App" asp-action="About">About</a></li>
             <li><a asp-controller="App" asp-action="Contact">Contact</a></li>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li><a asp-action="Trips" asp-controller="App">Your Trips</a></li>
+                <li><a asp-action="Logout" asp-controller="Auth">Logout</a></li>
+            }
+            else
+            {
+                <li><a asp-action="Login" asp-controller="Auth">Login</a></li>
+            }
         </ul>
     </div>
 
@@ -62,8 +74,15 @@
         </div>
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <environment names="Development">
+        <script type="text/javascript" src="~/js/site.js"></script>
+    </environment>
+    <environment names="Production,Staging">
+        <script type="text/javascript" src="~/lib/_app/site.js"></script>
+    </environment>
 
     @RenderSection("scripts", false)
 

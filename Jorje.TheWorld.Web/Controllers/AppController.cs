@@ -12,20 +12,31 @@ namespace Jorje.TheWorld.Web.Controllers
 {
     public class AppController : Controller
     {
-        public AppController(IMailService mailService)
-        {
-            MailService = mailService;     
-        }
 
-        public IMailService MailService;
+        public AppController()
+        {
+        }
 
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult About()
+        [Authorize]
+        public IActionResult Trips()
         {
+            //try
+            //{
+            //    var data = _repository.GetAllTrips();
+
+            //    return View(data);
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.LogError($"Failed to get trips in Index page: {ex.Message}");
+            //    return Redirect("/error");
+            //}
+
             return View();
         }
 
@@ -34,30 +45,30 @@ namespace Jorje.TheWorld.Web.Controllers
             return View();
         }
 
-        [Authorize]
-        public IActionResult Trips()
-        {
-            //var trips = _
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult Contact(ContactViewModel contact)
+        public IActionResult Contact(ContactViewModel model)
         {
-            if (contact.Email.Contains("aol.com"))
-            {
-                ModelState.AddModelError("", "We don't support AOL addresses");
-            }
+            //if (model.Email.Contains("aol.com"))
+            //{
+            //    ModelState.AddModelError("", "We don't support AOL addresses");
+            //}
 
-            if (ModelState.IsValid)
-            {
-                //mail
-                ModelState.Clear();
-                ViewBag.UserMessage = "Message Sent";
-            }
+            //if (ModelState.IsValid)
+            //{
+            //    _mailService.SendMail(_config["MailSettings:ToAddress"], model.Email, "From TheWorld", model.Message);
+
+            //    ModelState.Clear();
+
+            //    ViewBag.UserMessage = "Message Sent";
+            //}
 
             return View();
-
         }
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
     }
 }
