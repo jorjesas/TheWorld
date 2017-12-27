@@ -88,6 +88,14 @@ namespace Jorje.TheWorld.Api
             //var builder = new ContainerBuilder();
             //var container = builder.Build();
 
+            // Add Cors
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
             // Add framework services.
             services.AddMvc(config =>
             {
@@ -195,6 +203,9 @@ namespace Jorje.TheWorld.Api
             });
 
             AutoMapperContainer.Initialize();
+
+            // Enable Cors
+            app.UseCors("MyPolicy");
 
             app.UseMvc(routes =>
             {

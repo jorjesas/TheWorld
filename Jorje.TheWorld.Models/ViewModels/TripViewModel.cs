@@ -8,6 +8,7 @@ namespace Jorje.TheWorld.Models.ViewModels
 {
     public class TripViewModel
     {
-        
+        public string Name { get; set; }
+        public DateTime Created { get; set; }
     }
 }

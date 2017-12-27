@@ -20,7 +20,16 @@ namespace Jorje.TheWorld.Api.Controllers
             _tripBus = tripBus;
         }
 
-        [HttpGet("{id}", Name = "GetTrips")]
+        [HttpGet(Name = "GetTrips")]
+        public async Task<IActionResult> Get()
+        {
+            var trips = new List<TripDTO>() { new TripDTO() { Name = "Barcelona", StartDate = DateTime.Now },
+                               new TripDTO() { Name = "Milano", StartDate = DateTime.Now }};
+
+            return Ok(trips);
+        }
+
+        [HttpGet("{id}", Name = "GetTrip")]
         public async Task<IActionResult> Get(int id)
         {
             TripDTO trip = await _tripBus.GetTrip(id);

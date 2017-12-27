@@ -22,7 +22,7 @@ namespace Jorje.TheWorld.Web.Controllers
             return View();
         }
 
-        [Authorize]
+        //[Authorize]
         public IActionResult Trips()
         {
             //try
@@ -36,6 +36,8 @@ namespace Jorje.TheWorld.Web.Controllers
             //    _logger.LogError($"Failed to get trips in Index page: {ex.Message}");
             //    return Redirect("/error");
             //}
+
+            var data = new List<TripViewModel>() { new TripViewModel() {Name="Barcelona", Created=DateTime.Now } };
 
             return View();
         }

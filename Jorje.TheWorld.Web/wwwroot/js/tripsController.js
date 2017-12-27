@@ -18,12 +18,13 @@
     vm.errorMessage = "";
     vm.isBusy = true;
 
-    $http.get("/api/trips")
+    $http.get("http://localhost:54928/api/trips")
       .then(function (response) {
         // Success
         angular.copy(response.data, vm.trips);
       }, function (error) {
         // Failure
+          debugger
         vm.errorMessage = "Failed to load data: " + error;
       })
       .finally(function () {
