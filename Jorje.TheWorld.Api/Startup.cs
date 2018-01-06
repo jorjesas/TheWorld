@@ -33,6 +33,7 @@ using Jorje.TheWorld.Dal.Sort;
 using Newtonsoft.Json.Serialization;
 using Jorje.TheWorld.Common.Services.Contract;
 using Jorje.TheWorld.Common.Services;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Jorje.TheWorld.Api
 {
@@ -103,10 +104,24 @@ namespace Jorje.TheWorld.Api
                 config.ReturnHttpNotAcceptable = true;
                 config.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
                 config.InputFormatters.Add(new XmlDataContractSerializerInputFormatter());
+
+                var jsonOutputFormatter = config.OutputFormatters
+                    .OfType<JsonOutputFormatter>().FirstOrDefault();
+
+                if (jsonOutputFormatter != null)
+                {
+                    jsonOutputFormatter.SupportedMediaTypes.Add("application/hateoas+json");
+                }
             })
             .AddJsonOptions(options =>
             {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
+
+            // Register the Swagger generator, defining one or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Trips API", Version = "v1" });
             });
 
             services.AddIdentity<WorldUser, IdentityRole>(config =>
@@ -206,6 +221,15 @@ namespace Jorje.TheWorld.Api
 
             // Enable Cors
             app.UseCors("MyPolicy");
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Trip API V1");
+            });
 
             app.UseMvc(routes =>
             {

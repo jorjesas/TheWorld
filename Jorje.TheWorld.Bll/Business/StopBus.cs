@@ -64,7 +64,7 @@ namespace Jorje.TheWorld.Bll.Business
 
             if (stops != null && stops.Count > 0)
             {
-                result.Result = new PagedList<StopDTO>(StopMapper.ConvertEntityToModel(stops), stops.Count, stops.CurrentPage, stops.PageSize);
+                result.Result = new PagedList<StopDTO>(StopMapper.ConvertEntityToModel(stops), stops.TotalCount, stops.CurrentPage, stops.PageSize);
             }
 
             return result;
@@ -99,13 +99,16 @@ namespace Jorje.TheWorld.Bll.Business
             return false;
         }
 
-        public async Task<StopDTO> UpdateStop(int stopId, StopForUpdateDTO stopModel)
+        public async Task<ResourceDataResult> UpdateStop(int stopId, StopForUpdateDTO stopModel)
         {
+            ResourceDataResult result = new ResourceDataResult();
+
             var stop = await _stopRepo.GetStopById(stopId);
 
             //upsert
             if (stop == null)
             {
+                result.StatusCode = 201;
                 stop = new Stop() { Id=stopId };
             }
 
@@ -113,7 +116,8 @@ namespace Jorje.TheWorld.Bll.Business
 
             if (stop != null && await _stopRepo.UpdateStop(stop))
             {
-                return StopMapper.ConvertEntityToModel(stop);
+                result.Result = StopMapper.ConvertEntityToModel(stop);
+                return result;
             }
 
             return null;

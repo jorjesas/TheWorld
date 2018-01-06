@@ -45,9 +45,10 @@ namespace Jorje.TheWorld.Api.Controllers
         }
 
         [HttpGet(Name = "GetStops")]
-        public async Task<IActionResult> GetStops(/*[FromQuery(Name = "page")]int pageNumber = 1,
-                                                  [FromQuery(Name ="size")]  int pageSize = 10*/
-                                                  PaginationProperties paginationProperties)
+        [HttpHead]
+        public async Task<IActionResult> GetStops(
+            PaginationProperties paginationProperties,
+            [FromHeader(Name = "Accept")] string mediaType)
         {
             if (!_typeHelperService.TypeHasProperties<StopDTO>(paginationProperties.Fields))
             {
@@ -58,7 +59,7 @@ namespace Jorje.TheWorld.Api.Controllers
 
             if (result.StatusCode != 0)
             {
-                return BadRequest();
+                return StatusCode(result.StatusCode, result.ErrorMessage);
             }
 
             PagedList<StopDTO> stops = result.Result as PagedList<StopDTO>;
@@ -68,22 +69,61 @@ namespace Jorje.TheWorld.Api.Controllers
                 return NotFound();
             }
 
-            var previousPageLink = stops.HasPrevious ? CreateStopsResourceUri(paginationProperties, ResourceUriType.PreviousPage) : null;
-            var nextPageLink = stops.HasNext ? CreateStopsResourceUri(paginationProperties, ResourceUriType.NextPage) : null;
-
-            var paginationMetadata = new
+            if (mediaType == "application/hateoas+json")
             {
-                totalCount = stops.TotalCount,
-                pageSize = stops.PageSize,
-                currentPage = stops.CurrentPage,
-                totalPages = stops.TotalPages,
-                previousPageLink = previousPageLink,
-                nextPageLink = nextPageLink
-            };
+                var paginationMetadata = new
+                {
+                    totalCount = stops.TotalCount,
+                    pageSize = stops.PageSize,
+                    currentPage = stops.CurrentPage,
+                    totalPages = stops.TotalPages,
+                };
 
-            Response.Headers.Add("X-Pagination", Serializer.JsonSerialize(paginationMetadata));
+                Response.Headers.Add("X-Pagination", Serializer.JsonSerialize(paginationMetadata));
 
-            return Ok(stops.ShapeData(paginationProperties.Fields));
+                var links = CreateLinksForStops(paginationProperties,
+                    stops.HasNext, stops.HasPrevious);
+
+                var shapedStops = stops.ShapeEnumerableData(paginationProperties.Fields);
+
+                var shapedStopsWithLinks = shapedStops.Select(stop =>
+                {
+                    var stopAsDictionary = stop as IDictionary<string, object>;
+                    var stopLinks = CreateLinksForStop(
+                        (int)stopAsDictionary["Id"], paginationProperties.Fields);
+
+                    stopAsDictionary.Add("links", stopLinks);
+
+                    return stopAsDictionary;
+                });
+
+                var linkedCollectionResource = new
+                {
+                    value = shapedStopsWithLinks,
+                    links = links
+                };
+
+                return Ok(linkedCollectionResource);
+            }
+            else
+            {
+                var previousPageLink = stops.HasPrevious ? CreateStopsResourceUri(paginationProperties, ResourceUriType.PreviousPage) : null;
+                var nextPageLink = stops.HasNext ? CreateStopsResourceUri(paginationProperties, ResourceUriType.NextPage) : null;
+
+                var paginationMetadata = new
+                {
+                    totalCount = stops.TotalCount,
+                    pageSize = stops.PageSize,
+                    currentPage = stops.CurrentPage,
+                    totalPages = stops.TotalPages,
+                    previousPageLink = previousPageLink,
+                    nextPageLink = nextPageLink
+                };
+
+                Response.Headers.Add("X-Pagination", Serializer.JsonSerialize(paginationMetadata));
+
+                return Ok(stops.ShapeEnumerableData(paginationProperties.Fields));
+            }
         }
 
         [HttpGet("{id}", Name = "GetStop")]
@@ -101,7 +141,14 @@ namespace Jorje.TheWorld.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(stop.ShapeData(fields));
+            var links = CreateLinksForStop(id, fields);
+
+            var linkedResourceToReturn = stop.ShapeData(fields)
+                as IDictionary<string, object>;
+
+            linkedResourceToReturn.Add("links", links);
+
+            return Ok(linkedResourceToReturn);
         }
 
         [HttpPost]
@@ -132,7 +179,7 @@ namespace Jorje.TheWorld.Api.Controllers
             return CreatedAtRoute("GetStop", new { id = stop.Id}, stop);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteStop")]
         public async Task<IActionResult> DeleteStop(int id)
         {
             StopDTO stop = await _stopBus.GetStop(id);
@@ -151,7 +198,7 @@ namespace Jorje.TheWorld.Api.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "UpdateStop")]
         public async Task<IActionResult> UpdateStop(int id, [FromBody]StopForUpdateDTO stopInput)
         {
             if (stopInput == null)
@@ -159,17 +206,41 @@ namespace Jorje.TheWorld.Api.Controllers
                 return BadRequest();
             }
 
-            var stop = await _stopBus.UpdateStop(id, stopInput);
+            if (stopInput.Latitude > 360 || stopInput.Longitude > 360)
+            {
+                ModelState.AddModelError(nameof(StopForUpdateDTO), "Latitude and longitude can be specified up to 360 degrees");
+            }
 
-            if (stop == null)
+            if (string.IsNullOrWhiteSpace(stopInput.Name))
+            {
+                ModelState.AddModelError(nameof(StopForUpdateDTO), "Empty name is invalid!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return new UnprocessableEntityObjectResult(ModelState);
+            }
+
+            var stopResult = await _stopBus.UpdateStop(id, stopInput);
+
+            if (stopResult == null || stopResult.Result == null)
             {
                 return StatusCode(500, "Update failure");
+            }
+
+            StopDTO stop = stopResult.Result as StopDTO;
+
+            if (stopResult.StatusCode == 201)
+            {
+                return CreatedAtRoute("GetStop",
+                    new { id = stop.Id },
+                    stop);
             }
 
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}", Name = "PartiallyUpdateStop")]
         public async Task<IActionResult> PartiallyUpdateStop(int id, [FromBody]JsonPatchDocument<StopForUpdateDTO> patchDoc)
         {
             if (patchDoc == null)
@@ -193,9 +264,9 @@ namespace Jorje.TheWorld.Api.Controllers
                 return new UnprocessableEntityObjectResult(ModelState);
             }
 
-            var stop = await _stopBus.UpdateStop(id, stopModel);
+            var stopResult = await _stopBus.UpdateStop(id, stopModel);
 
-            if (stop == null)
+            if (stopResult == null || stopResult.Result == null)
             {
                 return StatusCode(500, "Update failure");
             }
@@ -241,6 +312,81 @@ namespace Jorje.TheWorld.Api.Controllers
                         pageSize = paginationProperties.PageSize
                     });
             }
+        }
+
+        private IEnumerable<LinkDTO> CreateLinksForStop(int id, string fields)
+        {
+            var links = new List<LinkDTO>();
+
+            if (string.IsNullOrWhiteSpace(fields))
+            {
+                links.Add(
+                  new LinkDTO(_urlHelper.Link("GetStop", new { id = id }),
+                  "self",
+                  "GET"));
+            }
+            else
+            {
+                links.Add(
+                  new LinkDTO(_urlHelper.Link("GetStop", new { id = id, fields = fields }),
+                  "self",
+                  "GET"));
+            }
+
+            links.Add(
+              new LinkDTO(_urlHelper.Link("DeleteStop", new { id = id }),
+              "delete_stop",
+              "DELETE"));
+
+            links.Add(
+              new LinkDTO(_urlHelper.Link("CreateStop", new { stopId = id }),
+              "create_stop",
+              "POST"));
+
+            links.Add(
+               new LinkDTO(_urlHelper.Link("GetTripsForStop", new { stopId = id }),
+               "trips_for_stop",
+               "GET"));
+
+            return links;
+        }
+
+        private IEnumerable<LinkDTO> CreateLinksForStops(
+            PaginationProperties paginationProperties,
+            bool hasNext, bool hasPrevious)
+        {
+            var links = new List<LinkDTO>();
+
+            // self 
+            links.Add(
+               new LinkDTO(CreateStopsResourceUri(paginationProperties,
+               ResourceUriType.Current)
+               , "self", "GET"));
+
+            if (hasNext)
+            {
+                links.Add(
+                  new LinkDTO(CreateStopsResourceUri(paginationProperties,
+                  ResourceUriType.NextPage),
+                  "nextPage", "GET"));
+            }
+
+            if (hasPrevious)
+            {
+                links.Add(
+                    new LinkDTO(CreateStopsResourceUri(paginationProperties,
+                    ResourceUriType.PreviousPage),
+                    "previousPage", "GET"));
+            }
+
+            return links;
+        }
+
+        [HttpOptions]
+        public IActionResult GetStopsOptions()
+        {
+            Response.Headers.Add("Allow", "GET,OPTIONS,POST,PUT,PATCH,DELETE");
+            return Ok();
         }
     }
 }

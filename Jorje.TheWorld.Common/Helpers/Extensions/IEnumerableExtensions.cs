@@ -10,7 +10,7 @@ namespace Jorje.TheWorld.Common.Helpers.Extensions
 {
     public static class IEnumerableExtensions
     {
-        public static IEnumerable<ExpandoObject> ShapeData<TSource>(
+        public static IEnumerable<ExpandoObject> ShapeEnumerableData<TSource>(
             this IEnumerable<TSource> source,
             string fields)
         {
