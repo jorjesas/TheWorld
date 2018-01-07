@@ -9,6 +9,7 @@ namespace Jorje.TheWorld.Dal.IRepositories
     public interface IStopRepository : IAbstractRepository<Stop>
     {
         Task<PagedList<Stop>> GetStops(PaginationProperties paginationProperties);
+        Task<IEnumerable<Stop>> GetStops(IEnumerable<int> ids);
         Task<Stop> GetStopById(int stopId);
         Task<bool> CreateStop(Stop stop);
         Task<bool> DeleteStop(int id);

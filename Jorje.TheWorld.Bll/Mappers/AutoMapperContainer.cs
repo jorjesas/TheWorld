@@ -17,11 +17,17 @@ namespace Jorje.TheWorld.Bll.Mappers
                 //Entities to Models
                 cfg.CreateMap<Stop, StopDTO>();
                 cfg.CreateMap<Stop, StopForUpdateDTO>();
+                cfg.CreateMap<Trip, TripDTO>();
+                cfg.CreateMap<TripStop, TripStopDTO>();
+                cfg.CreateMap<PersonTrip, PersonTripDTO>();
 
                 //Models to Entities
                 cfg.CreateMap<StopDTO, Stop>();
                 cfg.CreateMap<StopForCreationDTO, Stop>();
                 cfg.CreateMap<StopForUpdateDTO, Stop>();
+                cfg.CreateMap<TripDTO, Trip>();
+                cfg.CreateMap<TripStopDTO, TripStop>();
+                cfg.CreateMap<PersonTripDTO, PersonTrip>();
             });
         }
 

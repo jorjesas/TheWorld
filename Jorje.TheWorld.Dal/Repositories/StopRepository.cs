@@ -47,7 +47,18 @@ namespace Jorje.TheWorld.Dal.Repositories
             //return await query.ToListAsync();
         }
 
-        public async Task<Stop> GetStopById(int stopId)
+        public async Task<IEnumerable<Stop>> GetStops(IEnumerable<int> ids)
+        {
+            var query = GetAll()
+                .Where(s => ids.Contains(s.Id))
+                .OrderBy(s => s.Latitude)
+                .OrderBy(s => s.Longitude)
+                .OrderBy(s => s.Name);
+
+            return await query.ToListAsync();
+        }
+
+            public async Task<Stop> GetStopById(int stopId)
         {
             var query = GetAll().Where(m => m.Id == stopId);
 

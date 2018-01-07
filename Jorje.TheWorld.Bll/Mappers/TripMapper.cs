@@ -22,7 +22,19 @@ namespace Jorje.TheWorld.Bll.Mappers
 
         public static Trip UpdateEntityFromModel(Trip trip, TripDTO tripModel)
         {
-            return GenericMapper.UpdateEntityFromModel<Trip, TripDTO>(trip, tripModel);
+            var tripResult =  GenericMapper.UpdateEntityFromModel<Trip, TripDTO>(trip, tripModel);
+
+            if (tripResult.TripStops == null)
+            {
+                tripResult.TripStops = new List<TripStop>();
+            }
+
+            foreach(var stop in tripModel.Stops)
+            {
+                tripResult.TripStops.Add(GenericMapper.ConvertModelToEntity<TripStop, TripStopDTO>(stop));
+            }
+
+            return trip;
         }
 
 

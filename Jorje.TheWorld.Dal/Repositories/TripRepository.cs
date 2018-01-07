@@ -50,13 +50,14 @@ namespace Jorje.TheWorld.Dal.Repositories
 
         public async Task<Trip> GetTripById(int tripId)
         {
-            var query = GetAll().Where(m => m.Id == tripId);
+            var query = GetAll().Where(m => m.Id == tripId).Include(t => t.TripStops);
 
             return await query.FirstOrDefaultAsync();
         }
 
         public async Task<bool> UpdateTrip(Trip trip)
         {
+            _dbContext.Entry(trip).State = EntityState.Modified;
             return await UpdateEntity(trip);
         }
     }

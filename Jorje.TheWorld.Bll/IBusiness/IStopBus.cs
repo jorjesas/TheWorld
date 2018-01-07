@@ -15,6 +15,7 @@ namespace Jorje.TheWorld.Bll.IBusiness
     {
         Task<StopDTO> GetStop(int stopId);
         Task<ResourceDataResult> GetStops(PaginationProperties paginationProperties);
+        Task<IEnumerable<StopDTO>> GetStops(IEnumerable<int> ids);
         Task<StopDTO> GetStopsByTrip(int tripId);
         Task<StopDTO> CreateStop(StopForCreationDTO stopModel);
         Task<bool> DeleteStop(StopDTO stopModel);

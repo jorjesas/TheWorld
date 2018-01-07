@@ -70,7 +70,19 @@ namespace Jorje.TheWorld.Bll.Business
             return result;
         }
 
-        public Task<StopDTO> GetStopsByTrip(int tripId)
+        public async Task<IEnumerable<StopDTO>> GetStops(IEnumerable<int> ids)
+        {
+            var stops = await _stopRepo.GetStops(ids);
+
+            if (stops != null)
+            {
+                return StopMapper.ConvertEntityToModel(stops);
+            }
+
+            return null;
+        }
+
+            public Task<StopDTO> GetStopsByTrip(int tripId)
         {
             throw new NotImplementedException();
         }
