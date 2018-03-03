@@ -11,20 +11,26 @@ using Jorje.TheWorld.Api.Models;
 using JWT.Algorithms;
 using JWT.Serializers;
 using JWT;
+using Microsoft.AspNetCore.Http.Authentication;
+using Jorje.TheWorld.Domain;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Jorje.TheWorld.Api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Account")]
+    [Route("api/account")]
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<TripIdentityUser> _userManager;
+        private readonly SignInManager<TripIdentityUser> _signInManager;
         private readonly JWTSettings _options;
 
         public AccountController(
-          UserManager<IdentityUser> userManager,
-          SignInManager<IdentityUser> signInManager,
+          UserManager<TripIdentityUser> userManager,
+          SignInManager<TripIdentityUser> signInManager,
           IOptions<JWTSettings> optionsAccessor)
         {
             _userManager = userManager;
@@ -37,7 +43,7 @@ namespace Jorje.TheWorld.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Credentials.Email, Email = Credentials.Email };
+                var user = new TripIdentityUser { UserName = Credentials.Email, Email = Credentials.Email };
                 var result = await _userManager.CreateAsync(user, Credentials.Password);
                 if (result.Succeeded)
                 {
@@ -63,6 +69,8 @@ namespace Jorje.TheWorld.Api.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByEmailAsync(Credentials.Email);
+                    
+
                     return new JsonResult(new Dictionary<string, object>
                         {
                             { "access_token", GetAccessToken(Credentials.Email) },
@@ -72,6 +80,54 @@ namespace Jorje.TheWorld.Api.Controllers
                 return new JsonResult("Unable to sign in") { StatusCode = 401 };
             }
             return Error("Unexpected error");
+        }
+
+        [HttpPost("token")]
+        public async Task<IActionResult> GetToken([FromBody] Credentials credentials)
+        {
+            var token = CreateToken(credentials);
+
+            if (token != null)
+            {
+                return Ok(token);
+            }
+            else
+            {
+                return BadRequest("Failed to generate token");
+            }
+        }
+
+        private object CreateToken(Credentials credentials)
+        {
+            if (!string.IsNullOrWhiteSpace(credentials.Email))
+            {
+                var claims = new[]
+                {
+                  new Claim(JwtRegisteredClaimNames.Sub, credentials.Email),
+                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                  new Claim(JwtRegisteredClaimNames.Email, credentials.Email)
+                };
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var token = new JwtSecurityToken(
+                  issuer: _options.Issuer,
+                  audience: _options.Audience,
+                  claims: claims,
+                  expires: DateTime.UtcNow.AddMinutes(15),
+                  signingCredentials: creds
+                  );
+
+                return new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                };
+
+            }
+
+            return null;
         }
 
         private string GetIdToken(IdentityUser user)

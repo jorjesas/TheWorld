@@ -34,6 +34,9 @@ using Newtonsoft.Json.Serialization;
 using Jorje.TheWorld.Common.Services.Contract;
 using Jorje.TheWorld.Common.Services;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Jorje.TheWorld.Api.Filters.Jorje.TheWorld.Api.Filters;
 
 namespace Jorje.TheWorld.Api
 {
@@ -122,9 +125,25 @@ namespace Jorje.TheWorld.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Trips API", Version = "v1" });
+                // Define Jwt Bearer Options
+                //c.AddSecurityDefinition("bearer", new ApiKeyScheme()
+                //{
+                //    Type = "apiKey",
+                //    In = "header",
+                //    Name = "Authorization"
+                //});
+
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
+                {
+                    Description = "Authorization header using the Bearer scheme",
+                    Name = "Authorization",
+                    In = "header"
+                });
+
+                c.DocumentFilter<SwaggerSecurityRequirementsDocumentFilter>();
             });
 
-            services.AddIdentity<WorldUser, IdentityRole>(config =>
+            services.AddIdentity<TripIdentityUser, IdentityRole>(config =>
             {
                 config.User.RequireUniqueEmail = true;
                 config.Password.RequiredLength = 8;
@@ -147,10 +166,17 @@ namespace Jorje.TheWorld.Api
                     OnRedirectToLogin = ctx =>
                     {
                         ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
+                    },
+                    OnRedirectToAccessDenied = ctx =>
+                    {
+                        ctx.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        return Task.CompletedTask;
                     }
                 };
             });
+
+            services.AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -188,34 +214,80 @@ namespace Jorje.TheWorld.Api
 
             app.UseIdentity();
 
-            // secretKey contains a secret passphrase only your server knows
-            var secretKey = Configuration.GetSection("JWTSettings:SecretKey").Value;
-            var issuer = Configuration.GetSection("JWTSettings:Issuer").Value;
-            var audience = Configuration.GetSection("JWTSettings:Audience").Value;
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
-            var tokenValidationParameters = new TokenValidationParameters
+            app.UseJwtBearerAuthentication(new JwtBearerOptions()
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = signingKey,
-
-                // Validate the JWT Issuer (iss) claim
-                ValidateIssuer = true,
-                ValidIssuer = issuer,
-
-                // Validate the JWT Audience (aud) claim
-                ValidateAudience = true,
-                ValidAudience = audience
-            };
-            app.UseJwtBearerAuthentication(new JwtBearerOptions
-            {
-                TokenValidationParameters = tokenValidationParameters
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true,
+                TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidIssuer = Configuration.GetSection("JWTSettings:Issuer").Value,
+                    ValidAudience = Configuration.GetSection("JWTSettings:Audience").Value,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("JWTSettings:SecretKey").Value)),
+                    ValidateLifetime = true
+                }
             });
 
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AutomaticAuthenticate = false,
-                AutomaticChallenge = false
-            });
+            //// secretKey contains a secret passphrase only your server knows
+            //var secretKey = Configuration.GetSection("JWTSettings:SecretKey").Value;
+            //var issuer = Configuration.GetSection("JWTSettings:Issuer").Value;
+            //var audience = Configuration.GetSection("JWTSettings:Audience").Value;
+            //var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            //var tokenValidationParameters = new TokenValidationParameters
+            //{
+            //    ValidateIssuerSigningKey = true,
+            //    IssuerSigningKey = signingKey,
+
+            //    // Validate the JWT Issuer (iss) claim
+            //    ValidateIssuer = true,
+            //    ValidIssuer = issuer,
+
+            //    // Validate the JWT Audience (aud) claim
+            //    ValidateAudience = true,
+            //    ValidAudience = audience
+            //};
+            //app.UseJwtBearerAuthentication(new JwtBearerOptions
+            //{
+            //    AutomaticAuthenticate = true,
+            //    AutomaticChallenge = true,
+            //    TokenValidationParameters = tokenValidationParameters
+            //});
+
+            //app.UseCookieAuthentication(new CookieAuthenticationOptions
+            //{
+            //    AutomaticAuthenticate = true,
+            //    AutomaticChallenge = true
+            //});
+
+            //app.UseCookieAuthentication(new CookieAuthenticationOptions
+            //{
+            //    AuthenticationScheme = "Cookies",
+            //    AutomaticAuthenticate = true,
+            //    AutomaticChallenge = true
+            //});
+
+            //app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions
+            //{
+            //    ClientId = "41326939717-76coj8vvak5t3e4ietrj0eirg3m1ginv.apps.googleusercontent.com",
+            //    ClientSecret = "VU3yjPIPN0OEMEYTMm8nyncO",
+            //    Authority = "https://accounts.google.com",
+            //    ResponseType = OpenIdConnectResponseType.Code,
+            //    GetClaimsFromUserInfoEndpoint = true,
+            //    SaveTokens = true,
+            //    Events = new OpenIdConnectEvents()
+            //    {
+            //        OnRedirectToIdentityProvider = (context) =>
+            //        {
+            //            if (context.Request.Path != "/api/values/external")
+            //            {
+            //                context.Response.Redirect("/api/values/external");
+            //                context.HandleResponse();
+            //            }
+
+            //            return Task.FromResult(0);
+            //        }
+            //    }
+            //});
 
             AutoMapperContainer.Initialize();
 
@@ -229,6 +301,7 @@ namespace Jorje.TheWorld.Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Trip API V1");
+                c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
             });
 
             app.UseMvc(routes =>

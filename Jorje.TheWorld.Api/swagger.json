@@ -1,0 +1,1133 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "Trips API"
+  },
+  "paths": {
+    "/api/account": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "ApiAccountPost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "Credentials",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Credentials"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/account/sign-in": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "operationId": "ApiAccountSign-inPost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "Credentials",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Credentials"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/persons/{id}": {
+      "get": {
+        "tags": [
+          "Persons"
+        ],
+        "operationId": "ApiPersonsByIdGet",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Persons"
+        ],
+        "operationId": "ApiPersonsByIdPut",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "personInput",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/PersonDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Persons"
+        ],
+        "operationId": "ApiPersonsByIdDelete",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Persons"
+        ],
+        "operationId": "ApiPersonsByIdPatch",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "patchDoc",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/JsonPatchDocument[PersonDTO]"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/persons": {
+      "post": {
+        "tags": [
+          "Persons"
+        ],
+        "operationId": "ApiPersonsPost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "personIput",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/PersonDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/stops": {
+      "get": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsGet",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "SearchQuery",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsPost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "stopInput",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/StopForCreationDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsOptions",
+        "consumes": [],
+        "produces": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "head": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsHead",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "SearchQuery",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/stops/{id}": {
+      "get": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsByIdGet",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsByIdPut",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "stopInput",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/StopForUpdateDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsByIdDelete",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Stops"
+        ],
+        "operationId": "ApiStopsByIdPatch",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "patchDoc",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/JsonPatchDocument[StopForUpdateDTO]"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/trips": {
+      "get": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsGet",
+        "consumes": [],
+        "produces": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsPost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "tripInput",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/TripForCreationDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "options": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsOptions",
+        "consumes": [],
+        "produces": [],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/trips/{id}": {
+      "get": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsByIdGet",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsByIdPut",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "tripInput",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/TripDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsByIdDelete",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsByIdPatch",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "patchDoc",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/JsonPatchDocument[TripDTO]"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/trips/{id}/stops": {
+      "put": {
+        "tags": [
+          "Trips"
+        ],
+        "operationId": "ApiTripsByIdStopsPut",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Values": {
+      "get": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "ApiValuesGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json",
+          "application/hateoas+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "ApiValuesPost",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "value",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Values/{id}": {
+      "get": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "ApiValuesByIdGet",
+        "consumes": [],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json",
+          "application/hateoas+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "ApiValuesByIdPut",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/json-patch+json",
+          "application/xml",
+          "text/xml"
+        ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "value",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Values"
+        ],
+        "operationId": "ApiValuesByIdDelete",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Credentials": {
+      "required": [
+        "email",
+        "password"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "maxLength": 100,
+          "minLength": 6,
+          "type": "string"
+        }
+      }
+    },
+    "PersonDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "dateOfBirth": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "personImagePath": {
+          "type": "string"
+        }
+      }
+    },
+    "JsonPatchDocument[PersonDTO]": {
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Operation[PersonDTO]"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "Operation[PersonDTO]": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "object"
+        },
+        "path": {
+          "type": "string"
+        },
+        "op": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        }
+      }
+    },
+    "StopForCreationDTO": {
+      "required": [
+        "name",
+        "description"
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 500,
+          "type": "string"
+        },
+        "latitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "StopForUpdateDTO": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "latitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "JsonPatchDocument[StopForUpdateDTO]": {
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Operation[StopForUpdateDTO]"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "Operation[StopForUpdateDTO]": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "object"
+        },
+        "path": {
+          "type": "string"
+        },
+        "op": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        }
+      }
+    },
+    "TripForCreationDTO": {
+      "type": "object",
+      "properties": {}
+    },
+    "TripDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "format": "double",
+          "type": "number"
+        },
+        "startDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "endDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "stops": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TripStopDTO"
+          }
+        },
+        "persons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PersonDTO"
+          }
+        }
+      }
+    },
+    "TripStopDTO": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "arrivalTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "departureTime": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "trip": {
+          "$ref": "#/definitions/TripDTO"
+        },
+        "stop": {
+          "$ref": "#/definitions/StopDTO"
+        }
+      }
+    },
+    "StopDTO": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "latitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "JsonPatchDocument[TripDTO]": {
+      "type": "object",
+      "properties": {
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Operation[TripDTO]"
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "Operation[TripDTO]": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "object"
+        },
+        "path": {
+          "type": "string"
+        },
+        "op": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  }
+}

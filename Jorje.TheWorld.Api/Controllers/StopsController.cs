@@ -22,7 +22,7 @@ using Jorje.TheWorld.Common.Services.Contract;
 
 namespace Jorje.TheWorld.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/stops")]
     public class StopsController : Controller
     {

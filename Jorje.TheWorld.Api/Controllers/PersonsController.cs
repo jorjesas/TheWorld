@@ -1,5 +1,6 @@
 ﻿using Jorje.TheWorld.Bll.IBusiness;
 using Jorje.TheWorld.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Jorje.TheWorld.Api.Controllers
 {
+    [Authorize]
     [Route("api/persons")]
     public class PersonsController : Controller
     {

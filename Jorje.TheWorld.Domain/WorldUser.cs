@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Jorje.TheWorld.Domain
 {
-    public class WorldUser : IdentityUser
+    public class TripIdentityUser : IdentityUser
     {
         public DateTime FirstTrip { get; set; }
     }

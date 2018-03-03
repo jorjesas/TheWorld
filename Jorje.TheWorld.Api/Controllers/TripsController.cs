@@ -12,9 +12,11 @@ using Microsoft.Extensions.Logging;
 using Jorje.TheWorld.Common.Helpers.Extensions;
 using Jorje.TheWorld.Common.Helpers;
 using Jorje.TheWorld.Api.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Jorje.TheWorld.Api.Controllers
 {
+    [Authorize]
     [Route("api/trips")]
     public class TripsController : Controller
     {

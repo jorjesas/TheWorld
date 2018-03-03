@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Jorje.TheWorld.Dal.Context
 {
-    public class WorldDBContext : IdentityDbContext<WorldUser>
+    public class WorldDBContext : IdentityDbContext<TripIdentityUser>
     {
         //private string _connectionString;
         //private ILoggerFactory _logger;
